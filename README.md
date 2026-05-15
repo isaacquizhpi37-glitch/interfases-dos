@@ -1,2 +1,0 @@
-# interfases-dos
-App Inventor
