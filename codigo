@@ -1,0 +1,88 @@
+#include "BluetoothSerial.h"
+
+BluetoothSerial SerialBT;
+
+// Pines de LEDs
+const int ledSaludo = 2;
+const int ledDespedida = 4;
+
+// Variables de animación
+unsigned long tiempoInicio = 0;
+bool animacionTerminada = false;
+
+void setup() {
+Serial.begin(115200);
+SerialBT.begin("ESP32_ISAAC");
+
+pinMode(ledSaludo, OUTPUT);
+pinMode(ledDespedida, OUTPUT);
+
+Serial.println("ESP32 iniciado...");
+
+tiempoInicio = millis();
+}
+
+void loop() {
+
+// 🔵 Animación inicial
+if (!animacionTerminada) {
+animacionBluetooth();
+return;
+}
+
+// 📩 Recepción Bluetooth
+if (SerialBT.available()) {
+
+String mensaje = SerialBT.readStringUntil('\n');  
+mensaje.trim();  
+
+// 🔎 Mostrar correctamente el mensaje recibido  
+Serial.print("respuesta: ");  
+Serial.println(mensaje);  
+
+// 💡 Control de LEDs  
+if (mensaje == "hola") {  
+  digitalWrite(ledSaludo, HIGH);  
+  digitalWrite(ledDespedida, LOW);  
+}   
+else if (mensaje == "adios") {  
+  digitalWrite(ledSaludo, LOW);  
+  digitalWrite(ledDespedida, HIGH);  
+}
+
+}
+}
+
+// 🔵 Animación tipo Bluetooth
+void animacionBluetooth() {
+unsigned long tiempoActual = millis();
+
+// Parpadeo (3s)
+if (tiempoActual - tiempoInicio < 3000) {
+digitalWrite(ledSaludo, HIGH);
+digitalWrite(ledDespedida, LOW);
+delay(150);
+digitalWrite(ledSaludo, LOW);
+digitalWrite(ledDespedida, HIGH);
+delay(150);
+}
+// Encendido fijo (2s)
+else if (tiempoActual - tiempoInicio < 5000) {
+digitalWrite(ledSaludo, HIGH);
+digitalWrite(ledDespedida, HIGH);
+}
+// Fin
+else {
+digitalWrite(ledSaludo, LOW);
+digitalWrite(ledDespedida, LOW);
+animacionTerminada = true;
+
+Serial.println("Bluetooth listo");
+
+}
+}
+
+Des este código hay como modificar para poner cuatro leds y cuatro botones en app inverntor que cuando se saliste el un botón de la aplicación los leds se enciendan cada unos después de dos segundos
+Y cuando se aplaste el segundo botón los leds empiezan a parpadear
+Cuando se aplaste el tercer botón los leds nos e si me puedes dar alguna idea
+Y cuando se aplaste el cuarto  botón quiero que los leds hagan algo pero dame ideas
